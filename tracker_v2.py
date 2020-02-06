@@ -2,15 +2,13 @@ import time
 import requests
 import boto3
 
-HIGHEST_BOUND = 0.30
-HIGH_BOUND = 0.25
-LOW_BOUND = 0.18
-LOWEST_BOUND = 0.17
+HIGHEST_BOUND = 0.33
+HIGH_BOUND = 0.30
+LOW_BOUND = 0.25
+LOWEST_BOUND = 0.23
 
 PHONE_NUM = '+64274556736'
-
 BITSTAMP_API = 'https://www.bitstamp.net/api/v2/ticker/xrpusd/'
-
 CLIENT = boto3.client('sns', 'us-east-1')
 
 response = requests.get(BITSTAMP_API)
@@ -24,14 +22,14 @@ while response.status_code == 200:
         message = "Rate is at $" + str(asking_price) + ". Lowest bound: <$" + str(LOWEST_BOUND) + " threshold breached"
         message_sent = True
     if asking_price < LOW_BOUND:
-        message = "Rate is at $" + str(asking_price) + ". Lowser bound: <$" + str(LOW_BOUND) + " threshold breached"
+        message = "Rate is at $" + str(asking_price) + ". Low bound: <$" + str(LOW_BOUND) + " threshold breached"
         message_sent = True
 
     if asking_price > HIGHEST_BOUND:
         message = "Rate is at $" + str(asking_price) + ". Highest bound: >$" + str(HIGHEST_BOUND) + " threshold breached"
         message_sent = True
     if asking_price > HIGH_BOUND:
-        message = "Rate is at $" + str(asking_price) + ". Higher bound: >$" + str(HIGH_BOUND) + " threshold breached"
+        message = "Rate is at $" + str(asking_price) + ". High bound: >$" + str(HIGH_BOUND) + " threshold breached"
         message_sent = True
 
     if message_sent:
