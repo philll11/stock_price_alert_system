@@ -9,11 +9,15 @@ LOWEST_BOUND = 0.23
 
 PHONE_NUM = '+64274556736'
 BITSTAMP_API = 'https://www.bitstamp.net/api/v2/ticker/xrpusd/'
+
+print('Creating AWS client connection.')
 CLIENT = boto3.client('sns', 'us-east-1')
 
+print('Calling initial API request.')
 response = requests.get(BITSTAMP_API)
 message_sent = False
 
+print('Running tracker...')
 while response.status_code == 200:
     response = response.json()
     asking_price = float(response['ask'])
