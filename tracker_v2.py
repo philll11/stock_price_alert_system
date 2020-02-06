@@ -42,7 +42,7 @@ while response.status_code == 200:
         time.sleep(900)
         message_sent = False
 
-    time.sleep(1)
+    time.sleep(30)
     response = requests.get(BITSTAMP_API)
 
 print(response.status_code)
