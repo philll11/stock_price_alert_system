@@ -10,6 +10,7 @@ LOWEST_BOUND = 0.23
 PHONE_NUM = '+64274556736'
 BITSTAMP_API = 'https://www.bitstamp.net/api/v2/ticker/xrpusd/'
 CLIENT = boto3.client('sns', 'us-east-1')
+BROKEN_LOOP_MESSAGE = 'Loop has broken with error stauts: '
 
 response = requests.get(BITSTAMP_API)
 message_sent = False
@@ -42,3 +43,4 @@ while response.status_code == 200:
     response = requests.get(BITSTAMP_API)
 
 print(response.status_code)
+CLIENT.publish(PhoneNumber=PHONE_NUM, Message=BROKEN_LOOP_MESSAGE+response.status_code)
