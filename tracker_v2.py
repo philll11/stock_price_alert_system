@@ -53,7 +53,7 @@ while 1:
             f.write('Error: '+str(response.status_code))
             f.write('\n')            
             f.write(response.reason)
-            f.write('\n')            
+            f.write('\n')
             f.write(str(response.raise_for_status()))
             f.write('\n')
             f.write(response.headers['Date'])
