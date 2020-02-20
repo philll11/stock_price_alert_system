@@ -48,15 +48,18 @@ while 1:
         time.sleep(30)
         response = requests.get(BITSTAMP_API)
     else:
-        print(response.headers['Date']+'\n'+response.status_code)
-        with open('error_log.txt', 'a') as f:
-            f.write(response.headers['Date'])
-            f.write('\n')
-            f.write(str(response.status_code)+': '+response.reason)
-            f.write('\n')
+        print(response.status_code)
+        with open('error_log.txt', 'a') as f:            
+            f.write('Error: '+str(response.status_code))
+            f.write('\n')            
+            f.write(response.reason)
+            f.write('\n')            
             f.write(str(response.raise_for_status()))
             f.write('\n')
+            f.write(response.headers['Date'])
+            f.write('\n')
             f.write('#--------------------------------------------------#')
+        print(response.headers['Date'])
         
         time.sleep(1800)
         print('Error received. Will update in 30 minutes\n')
