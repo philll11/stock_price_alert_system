@@ -48,7 +48,7 @@ while 1:
         time.sleep(30)
         response = requests.get(BITSTAMP_API)
     else:
-        print(response.headers['Date']+'\n'+response.status_code)
+        print(response.headers['Date']+'\n'+str(response.status_code))
         with open('error_log.txt', 'a') as f:
             f.write(response.headers['Date'])
             f.write('\n')
