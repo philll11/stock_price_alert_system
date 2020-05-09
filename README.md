@@ -37,3 +37,17 @@ If your `Endpoint` is a channel, get the channel ID from your browser as discuss
 ## Functional in Python 3.6.9
 
 Install w/ pip: `pip3 install -r requirements.txt`
+
+# Execution
+
+`python tracker_v2.py`
+
+# Optional Parameters
+
+`--config [FILENAME]` defines an alertnate configuration file.  Default is config.yml
+`--sleep` amount of seconds to sleep between loops, if `--loop` is enabled.
+`--loop` causes the program to stay in an infinite loop.  requires a `--sleep` parameter
+
+Example
+
+`python tracker_v2.py --loop --sleep 3600` to sleep 30 minutes between checks.

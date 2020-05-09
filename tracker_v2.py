@@ -10,6 +10,7 @@ import coloredlogs
 import yfinance as yf
 from slack import WebClient
 from slack.errors import SlackApiError
+import argparse
 
 class StockTracker:
     def __init__(self, configFile="config.yml"): 
@@ -43,14 +44,15 @@ class StockTracker:
         @param symbol string of stock symbol
         @return float decimal value of stock price
         """
-        BITSTAMP_API = 'https://www.bitstamp.net/api/v2/ticker/xrpusd/'
-        self.LOG.info('Calling BitStamp API for ' + str(symbol))
+        BITSTAMP_API = 'https://www.bitstamp.net/api/v2/ticker/' + symbol.lower() + '/'
+        self.LOG.info('Calling BitStamp API for ' + str(symbol.lower()))
         try:
             response = requests.get(BITSTAMP_API)
             response = response.json()
             asking_price = float(response['ask'])
         except requests.RequestException as e:
             self.LOG.error("Exception calling Bitstamp: " + str(e))
+        self.LOG.info("Current price of " + str(symbol) + " is: " + str(asking_price) )
         return asking_price
 
     def getStockPrice(self, symbol):
@@ -99,7 +101,10 @@ class StockTracker:
         ch.setLevel(logLevel)
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         ch.setFormatter(formatter)
+        fh = logging.FileHandler("stockTracker.log")
+        fh.setLevel(logLevel)
         log.addHandler(ch)
+        log.addHandler(fh)
         coloredlogs.install(level=logLevel, logger=log)
         return log
 
@@ -143,45 +148,70 @@ class StockTracker:
                 
                 self.stocks[configObject] = self.config[configObject]
                 
-                
-    def start(self):
-        self.LOG.info('Running StockTracker... Press CTRL+C or kill the process to exit.')
-        while 1:
-            self.LOG.debug(self.stocks)
-            for symbol in self.stocks:
-                self.LOG.info("Querying for Symbol: " + symbol)
-                asking_price = self.getStockPrice( symbol )
-                alarm = False # Do we need to send an Alert?
-                self.LOG.debug(self.stocks[symbol])
-                if self.stocks[symbol]['Lowest'] and asking_price < self.stocks[symbol]['Lowest']:
-                    message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Lowest bound: <$" + str(self.stocks[symbol]['Lowest']) + " threshold breached"
-                    alarm = True
-                if self.stocks[symbol]['Low'] and asking_price < self.stocks[symbol]['Low']:
-                    message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Low bound: <$" + str(self.stocks[symbol]['Low']) + " threshold breached"
-                    alarm = True
-                if self.stocks[symbol]['Highest'] and asking_price > self.stocks[symbol]['Highest']:
-                    message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Highest bound: >$" + str(self.stocks[symbol]['Highest']) + " threshold breached"
-                    alarm = True
-                if self.stocks[symbol]['High'] and asking_price > self.stocks[symbol]['High']:
-                    message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". High bound: >$" + str(self.stocks[symbol]['High']) + " threshold breached"
-                    alarm = True
-                    
-                if alarm:
-                    self.sendSNSAlert( message )
-                    self.sendSlackAlert( message )
-                    self.LOG.warning( message )
+    def sleep(self, seconds):
+        self.LOG.info("Sleeping for " + str(seconds) + " seconds")
+        time.sleep(seconds)
 
-            sys.exit(1)
-        return True
+        
+    def start(self):
+        self.LOG.debug(self.stocks)
+        for symbol in self.stocks:
+            self.LOG.info("Querying for Symbol: " + symbol)
+            asking_price = self.getStockPrice( symbol )
+            alarm = False # Do we need to send an Alert?
+            self.LOG.debug(self.stocks[symbol])
+            if self.stocks[symbol]['Lowest'] and asking_price < self.stocks[symbol]['Lowest']:
+                message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Lowest bound: <$" + str(self.stocks[symbol]['Lowest']) + " threshold breached"
+                alarm = True
+            if self.stocks[symbol]['Low'] and asking_price < self.stocks[symbol]['Low']:
+                message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Low bound: <$" + str(self.stocks[symbol]['Low']) + " threshold breached"
+                alarm = True
+            if self.stocks[symbol]['Highest'] and asking_price > self.stocks[symbol]['Highest']:
+                message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". Highest bound: >$" + str(self.stocks[symbol]['Highest']) + " threshold breached"
+                alarm = True
+            if self.stocks[symbol]['High'] and asking_price > self.stocks[symbol]['High']:
+                message = "(" + symbol + ") Rate is at $" + str(float(asking_price)) + ". High bound: >$" + str(self.stocks[symbol]['High']) + " threshold breached"
+                alarm = True
+                
+            if alarm:
+                self.sendSNSAlert( message )
+                self.sendSlackAlert( message )
+                self.LOG.warning( message )
 
 def main():
-    if len(sys.argv) > 1: # Pass the first argument to the app as a custom config file name, if desired.
-        st = StockTracker( sys.argv[1] )
-    else:
-        st = StockTracker()
+    parser = argparse.ArgumentParser(description="Tracks stock prices!")
+    parser.add_argument('--config', help="defines an alertnate configuration file.  Default is config.yml", type=str)
+    parser.add_argument('--sleep', help="amount of seconds to sleep between loops, if `--loop` is enabled.", type=int)
+    parser.add_argument('--loop', help="causes the program to stay in an infinite loop.  requires a `--sleep` parameter", action="store_true")
     
-    st.start()
+    args = parser.parse_args()
 
+    if args.config:
+        thisConfig = args.config
+    else:
+        thisConfig = "config.yml"
+
+    if args.loop == True:
+        thisLoop = True
+    else:
+        thisLoop = False
+    
+
+    if args.sleep:
+        thisSleep = args.sleep
+    else:
+        thisSleep = 0
+        
+    st = StockTracker(thisConfig)
+    #log = st.setupLog()
+
+    if thisLoop:
+        while True:
+            st.start()
+            st.sleep(thisSleep)
+        
+    else:
+        st.start()        
 if __name__ == "__main__":
     main()
 
