@@ -34,7 +34,7 @@ After you have enabled the chat:write permission, you'll install your app from t
 Once installed, grab your Bot User OAuth Access Token, and insert it to the `config.yml` as the `BotToken` parameter
 
 Then, configure your `Endpoint`.
-If your `Endpoint` is a USER, you must feed your Slack Member ID, see here: `https://help.workast.com/hc/en-us/articles/360027461274-How-to-find-a-Slack-user-ID`
+If your `Endpoint` is a USER, you must feed the Slack Member ID, see here: `https://help.workast.com/hc/en-us/articles/360027461274-How-to-find-a-Slack-user-ID`
 
 If your `Endpoint` is a channel, get the channel ID from your browser as discussed here: `https://www.wikihow.com/Find-a-Channel-ID-on-Slack-on-PC-or-Mac`
 
