@@ -5,11 +5,16 @@ A script that can send alerts when a stock prices crosses a given threshold.
 # Configuration
 In `config_example.yml`, you can see a skeleton configuration.
 
-Configuration consists of 4 parts:
+Configuration consists of 2 main parts:
 
 * ApplicationConfig
+    * LogLevel: The desired verbosity of your logs
+    * SlackAlert: For each object in the SlackAlert List, the script will end an alert to the Endpoint using the BotToken
+    * SNSAlert: For each item in the SNSAlert List, an SMS will be sent using AWS SNS.
 
-Sets up Alert endpoints and the desired Log Level
+* Symbols
+    This is the bread and butter.  You configure symbols you want to watch, set the alarm tresholds, and set the Type of bitstamp or yahoo for the datasource.
+    
 
 ## Alerts
 
@@ -45,9 +50,11 @@ Install w/ pip: `pip3 install -r requirements.txt`
 # Optional Parameters
 
 `--config [FILENAME]` defines an alertnate configuration file.  Default is config.yml
+
 `--sleep` amount of seconds to sleep between loops, if `--loop` is enabled.
+
 `--loop` causes the program to stay in an infinite loop.  requires a `--sleep` parameter
 
-Example
+## Example
 
 `python tracker_v2.py --loop --sleep 3600` to sleep 30 minutes between checks.
