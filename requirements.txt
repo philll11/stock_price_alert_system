@@ -1,6 +1,9 @@
 boto3==1.12.3
 botocore==1.15.3
 certifi==2019.11.28
+#TODO Regenerate
+
+
 chardet==3.0.4
 Click==7.0
 docutils==0.15.2
@@ -20,3 +23,6 @@ six==1.14.0
 twilio==6.0.0
 urllib3==1.25.8
 Werkzeug==1.0.0
+coloredlogs==14.0
+git+git://github.com/alex4108/yfinance.git@master#egg=yfinance
+slackclient==2.5.0
