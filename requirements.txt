@@ -5,7 +5,7 @@ coloredlogs==14.0
 boto3==1.13.3
 numpy==1.18.4
 pandas_datareader==0.8.1
-PyYAML==5.3.1
+PyYAML==5.4
 slackclient==2.5.0
 ujson==2.0.3
 git+git://github.com/alex4108/yfinance.git@master#egg=yfinance
