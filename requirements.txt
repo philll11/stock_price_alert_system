@@ -7,5 +7,5 @@ numpy==1.18.4
 pandas_datareader==0.8.1
 PyYAML==5.3.1
 slackclient==2.5.0
-ujson==2.0.3
+ujson==5.2.0
 git+git://github.com/alex4108/yfinance.git@master#egg=yfinance
